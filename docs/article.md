@@ -4,6 +4,8 @@
 This is very useful when you to migrate your data from a database to another one, or you just want to populate data in ArangoDB to take advantages of such a database.
 The data are read from MongoDB (using a find query) and then inserted in ArangoDB. A query and a projection can be provided, to select the data and the fields to write in ArangoDB.
 
+![mongo2arango](images/mongo2arango.png)
+
 The configuration must be provided in a properties file. 
 * first, you configure the source:
   * MongoDB database and collection 
