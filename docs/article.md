@@ -1,21 +1,20 @@
 ## Mongo2Arango
 
-Tool for copying data from MongoDB to ArangoDB. The data are read from MongoDB (using a find query) and inserted in ArangoDB. A query and a projection can be provided, to select the data to write in ArangoDB.
+**mongo2arango** is tool to copy data from a MongoDB collection to an ArangoDB collection.
+This is very useful when you to migrate your data from a database to another one, or you just want to populate data in ArangoDB to take advantages of such a database.
+The data are read from MongoDB (using a find query) and then inserted in ArangoDB. A query and a projection can be provided, to select the data and the fields to write in ArangoDB.
+
+The configuration must be provided in a properties file. 
+* first, you configure the source:
+  * MongoDB database and collection 
+  * Optionally, you provide a query to select the data and a projection to define the field you want to insert in ArangoDB
+* then, you configure the target:
+  * ArangoDB database and collection
+  * Optionally, you can set a size for the bulk insert (i.e. the number of documents to create before executing the batch)
 
 
-### Build
 
-Requirements:
-* Maven 3
-* Java 7
-
-```bash
-mvn clean package
-```
-
-### Run
-
-#### Configuration
+The tool is available on github: https://github.com/bbonnin/mongo2arango
 
 You have to provide a properties file to the application (you can reuse the `mongo2arango-example.properties` file).
 
