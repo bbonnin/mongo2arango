@@ -23,7 +23,7 @@ mongo.port                 | 27017                      | mongod port
 mongo.db                   | test                       | Database name
 mongo.collection           | test                       | Collection name
 mongo.query                | {}                         | Query to select data 
-mongo.projection           | (none)                     | Projection used to select fields that will be inserted
+mongo.projection           | (none)                     | Projection used to select fields that will be inserted in ArangoDB
 mongo.batch_size           | 20                         | Batch size for the find query
 arango.host                | localhost                  | ArangoDB host or IP address
 arango.port                | 8529                       | ArangoDB port
