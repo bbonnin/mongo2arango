@@ -9,7 +9,9 @@ import org.jongo.QueryModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.ArangoDriver;
+import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.mongodb.DBCursor;
 
 /**
@@ -23,11 +25,11 @@ public class BulkInsert {
 
     private final Jongo jongo;
 
-    private final ArangoDriver arango;
+    private final ArangoDB arango;
 
     private final Config cfg = Config.get();
 
-    public BulkInsert(final Jongo jongo, final ArangoDriver arango) {
+    public BulkInsert(final Jongo jongo, final ArangoDB arango) {
         this.jongo = jongo;
         this.arango = arango;
     }
@@ -35,7 +37,7 @@ public class BulkInsert {
     /**
      * Data transfer from MongoDB to ArangoDB using a bulk insertion.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     public void run() throws Exception {
 
         final MongoCollection collection = jongo.getCollection(cfg.get(Config.MONGO_COLLECTION));
@@ -48,28 +50,31 @@ public class BulkInsert {
                     }
                 })
                 .as(Map.class);
-
-        arango.startBatchMode();
-
-        String id;
+        
         int total = 0;
         int count = 0;
         Map doc;
+        final String arangoDatabaseName = cfg.get(Config.ARANGO_DB);
         final String arangoColl = cfg.get(Config.ARANGO_COLLECTION);
         final int batchSize = cfg.getInt(Config.ARANGO_BATCH_SIZE);
-
+        
+        ArangoCollection arangoCollection = arango.db(DbName.of(arangoDatabaseName)).collection(arangoColl);
+		if (!arangoCollection.exists()) {
+			LOGGER.info("ArangoDB | Creating collection : {}", arangoCollection.name());
+			arangoCollection.create();
+		}
+        
         while (cursor.hasNext()) {
             total++;
             count++;
             doc = cursor.next();
-            id = doc.remove("_id").toString();
+            doc.remove("_id").toString();
 
-            arango.createDocument(arangoColl, doc, true, false);
+            arangoCollection.insertDocument(doc);
 
             if (count % batchSize == 0 || !cursor.hasNext()) {
                 LOGGER.info("Current total : {}", total);
                 count = 0;
-                arango.executeBatch();
             }
         }
 

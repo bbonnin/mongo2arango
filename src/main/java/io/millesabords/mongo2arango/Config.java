@@ -23,8 +23,6 @@ public class Config extends Properties {
     public static final String MONGO_PROJECTION = "mongo.projection";
     public static final String MONGO_BATCH_SIZE = "mongo.batch_size";
 
-    public static final String ARANGO_HOST = "arango.host";
-    public static final String ARANGO_PORT = "arango.port";
     public static final String ARANGO_DB = "arango.db";
     public static final String ARANGO_COLLECTION = "arango.collection";
     public static final String ARANGO_CREATE_DB = "arango.create_db";
@@ -43,8 +41,6 @@ public class Config extends Properties {
         put(MONGO_QUERY, "{}");
         put(MONGO_BATCH_SIZE, "20");
 
-        put(ARANGO_HOST, "localhost");
-        put(ARANGO_PORT, "8529");
         put(ARANGO_CREATE_DB, false);
         put(ARANGO_BATCH_SIZE, "20");
     }

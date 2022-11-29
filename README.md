@@ -31,12 +31,19 @@ mongo.collection           | test                       | Collection name
 mongo.query                | {}                         | Query to select data 
 mongo.projection           | (none)                     | Projection used to select fields that will be inserted
 mongo.batch_size           | 20                         | Batch size for the find query
-arango.host                | localhost                  | ArangoDB host or IP address
-arango.port                | 8529                       | ArangoDB port
 arango.db                  | (same as mongo.db)         | Database name
 arango.collection          | (same as mongo.collection) | Collection name
 arango.create_db           | false                      | Creation of the database if it does no exist
 arango.batch_size          | 20                         | Nb of documents before executing the batch
+
+And for ArangoDB connection use the specific `resources/arangodb.properties` file
+
+Property                   | Default value              | Description
+-------------------------- | -------------------------- | ----------------------------------------------------------------------
+arangodb.host			   | localhost                  | ArangoDB host or IP address
+arangodb.port			   | 8529                       | ArangoDB port
+arangodb.user			   | (username)                 | ArangoDB user
+arangodb.password		   | (password)                 | ArangoDB password
 
 
 
@@ -50,6 +57,6 @@ java -jar mongo2arango-jar-with-dependencies.jar -c mongo2arango.properties
 ### Test env
 
 This tool has been tested with:
-* ArangoDB 2.7.3
-* MongoDB 3.0.7, 3.2.0
+* ArangoDB 3.10.1
+* MongoDB 6.0.3
 

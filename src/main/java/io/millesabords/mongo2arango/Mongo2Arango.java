@@ -10,10 +10,9 @@ import org.kohsuke.args4j.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-import com.arangodb.ArangoHost;
+import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
+import com.arangodb.mapping.ArangoJack;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
@@ -33,7 +32,7 @@ public class Mongo2Arango {
 
     private Jongo jongo;
 
-    private ArangoDriver arangoDriver;
+    private ArangoDB arangoDb;
 
     private final Config cfg = Config.get();
 
@@ -59,7 +58,7 @@ public class Mongo2Arango {
 
             LOGGER.info("Start : {}", new Date());
 
-            new BulkInsert(jongo, arangoDriver).run();
+            new BulkInsert(jongo, arangoDb).run();
 
         }
         catch (final CmdLineException e) {
@@ -74,7 +73,6 @@ public class Mongo2Arango {
 
     }
 
-    @SuppressWarnings("deprecation")
     private void initMongoClient() {
         mongoClient = new MongoClient(new MongoClientURI(
             "mongodb://" + cfg.get(Config.MONGO_HOST) + ":" + cfg.get(Config.MONGO_PORT)));
@@ -83,22 +81,14 @@ public class Mongo2Arango {
     }
 
     private void initArangoClient() {
-        final String host = cfg.get(Config.ARANGO_HOST);
-        final int port = cfg.getInt(Config.ARANGO_PORT);
-
-        final ArangoConfigure configure = new ArangoConfigure();
-        configure.setArangoHost(new ArangoHost(host, port));
-        configure.init();
-
-        arangoDriver = new ArangoDriver(configure);
+        arangoDb = new ArangoDB.Builder().serializer(new ArangoJack()).build();
     }
 
-    private void createArangoDatabase() throws ArangoException {
-        if (cfg.getBoolean(Config.ARANGO_CREATE_DB)) {
-            arangoDriver.createDatabase(cfg.get(Config.ARANGO_DB));
+    private void createArangoDatabase() {
+    	DbName dbName = DbName.of(cfg.get(Config.ARANGO_DB));
+        if (cfg.getBoolean(Config.ARANGO_CREATE_DB) && !arangoDb.db(dbName).exists()) {
+			arangoDb.createDatabase(dbName);
         }
-
-        arangoDriver.setDefaultDatabase(cfg.get(Config.ARANGO_DB));
     }
 
 }
